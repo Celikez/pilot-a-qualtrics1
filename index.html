@@ -297,7 +297,8 @@ console.log('[PilotA] Return target:', RETURN_URL);
     const dest = `${RETURN_URL}${glue}pid=${encodeURIComponent(PID)}&cond=${encodeURIComponent(COND)}&fv_time=${encodeURIComponent(viewSecs)}&first_interaction=${encodeURIComponent(tFirst)}&item_order=${encodeURIComponent(compact)}`;
     window.location.assign(dest);
   } else {
-    window.history.back();
+    console.log('going here!!')
+    //window.history.back();
   }
 });
 </script>
