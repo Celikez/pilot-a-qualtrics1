@@ -295,6 +295,7 @@ console.log('[PilotA] Return target:', RETURN_URL);
   if (RETURN_URL) {
     const glue = RETURN_URL.includes('?') ? '&' : '?';
     console.log('in if statment');
+    window.location.assign('https://google.com');
     //const dest = `${RETURN_URL}${glue}pid=${encodeURIComponent(PID)}&cond=${encodeURIComponent(COND)}&fv_time=${encodeURIComponent(viewSecs)}&first_interaction=${encodeURIComponent(tFirst)}&item_order=${encodeURIComponent(compact)}`;
     //window.location.assign(dest);
   } else {
