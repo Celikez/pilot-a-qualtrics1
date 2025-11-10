@@ -75,7 +75,7 @@
   const PID  = qp('pid','');
   //const RETURN_URL = decodeURIComponent(qp('return',''));
   // NEW (robust): use return param if present, otherwise document.referrer, otherwise stay empty
-const RETURN_URL_RAW = qp('return','');
+const RETURN_URL_RAW = qp('return', qp('ret',''));
 let RETURN_URL = '';
 try {
   RETURN_URL = RETURN_URL_RAW ? decodeURIComponent(RETURN_URL_RAW) : '';
@@ -85,7 +85,7 @@ try {
 if (!RETURN_URL && document.referrer) {
   RETURN_URL = document.referrer;
 }
-
+console.log('[PilotA] Params in:', { PID, COND, RAND, HOLD, MINV, RETURN_URL });
   // --- DOM refs ---
   const stageIntro = document.getElementById('stage-intro');
   const stageFeedback = document.getElementById('stage-feedback');
