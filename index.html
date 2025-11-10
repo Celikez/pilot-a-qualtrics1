@@ -98,22 +98,24 @@
   function pad(n){ return String(n).padStart(2,'0'); }
 
   // --- Params from Qualtrics ---
-  const COND = (qp('cond','ai')||'ai').toLowerCase();
-  const RAND = qp('rand','0') === '1';
-  const HOLD = parseInt(qp('hold','15'),10);
-  const MINV = parseInt(qp('minView','30'),10);
-  const PID  = qp('pid','');
-  
-  const RETURN_URL_RAW = qp('return', qp('ret',''));
-  let RETURN_URL = '';
-  try {
-    RETURN_URL = RETURN_URL_RAW ? decodeURIComponent(RETURN_URL_RAW) : '';
-  } catch(e) {
-    RETURN_URL = RETURN_URL_RAW || '';
-  }
-  if (!RETURN_URL && document.referrer) {
-    RETURN_URL = document.referrer;
-  }
+const COND = (qp('cond','ai')||'ai').toLowerCase();
+const RAND = qp('rand','0') === '1';
+const HOLD = parseInt(qp('hold','15'),10);
+const MINV = parseInt(qp('minView','30'),10);
+const PID  = qp('pid','');
+
+// Always prefer the Qualtrics page we came from.
+// If referrer is missing (rare), fall back to the 'return' or 'ret' parameter.
+let RETURN_URL = document.referrer || '';
+if (!RETURN_URL) {
+  const raw = qp('return', qp('ret',''));
+  // do NOT decode if empty; some brands already pass a decoded URL
+  try { RETURN_URL = raw ? decodeURIComponent(raw) : ''; } catch { RETURN_URL = raw || ''; }
+}
+
+// Optional: debug in console while piloting
+console.log('[PilotA] Return target:', RETURN_URL);
+
   console.log('[PilotA] Params in:', { PID, COND, RAND, HOLD, MINV, RETURN_URL });
 
   // --- DOM refs ---
@@ -284,25 +286,20 @@
   });
 
   // --- STAGE 3 → RETURN TO QUALTRICS ---
-  toQualtrics.addEventListener('click', ()=>{
-    const end = Date.now();
-    const viewSecs = ((end - feedbackStart)/1000).toFixed(2);
-    const tFirst = firstInteraction ? ((firstInteraction - feedbackStart)/1000).toFixed(2) : '';
+ toQualtrics.addEventListener('click', ()=>{
+  const end = Date.now();
+  const viewSecs = ((end - feedbackStart)/1000).toFixed(2);
+  const tFirst = firstInteraction ? ((firstInteraction - feedbackStart)/1000).toFixed(2) : '';
+  const compact = order.map((o,idx)=>[idx, o.v[0], o.oi].join('|')).join(';');
 
-    const compact = order.map((o,idx)=>[idx, o.v[0], o.oi].join('|')).join(';');
-
-    if (RETURN_URL) {
-      const glue = RETURN_URL.includes('?') ? '&' : '?';
-      const dest = `${RETURN_URL}${glue}pid=${encodeURIComponent(PID)}&cond=${encodeURIComponent(COND)}&fv_time=${encodeURIComponent(viewSecs)}&first_interaction=${encodeURIComponent(tFirst)}&item_order=${encodeURIComponent(compact)}&essay_wc=${encodeURIComponent(essayWordCount)}`;
-      window.location.assign(dest);
-    } else {
-      if (document.referrer) {
-        window.location.assign(document.referrer);
-      } else {
-        window.history.back();
-      }
-    }
-  });
+  if (RETURN_URL) {
+    const glue = RETURN_URL.includes('?') ? '&' : '?';
+    const dest = `${RETURN_URL}${glue}pid=${encodeURIComponent(PID)}&cond=${encodeURIComponent(COND)}&fv_time=${encodeURIComponent(viewSecs)}&first_interaction=${encodeURIComponent(tFirst)}&item_order=${encodeURIComponent(compact)}`;
+    window.location.assign(dest);
+  } else {
+    window.history.back();
+  }
+});
 </script>
 </body>
 </html>
