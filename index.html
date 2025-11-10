@@ -106,8 +106,8 @@ const PID  = qp('pid','');
 
 // Always prefer the Qualtrics page we came from.
 // If referrer is missing (rare), fall back to the 'return' or 'ret' parameter.
-let RETURN_URL = www.google.com;
-//let RETURN_URL = document.referrer || '';
+
+let RETURN_URL = document.referrer || '';
 if (!RETURN_URL) {
   const raw = qp('return', qp('ret',''));
   // do NOT decode if empty; some brands already pass a decoded URL
