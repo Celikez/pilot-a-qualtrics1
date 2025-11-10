@@ -73,7 +73,18 @@
   const HOLD = parseInt(qp('hold','15'),10);                    // seconds analyzing hold
   const MINV = parseInt(qp('minView','30'),10);                 // seconds minimum viewing
   const PID  = qp('pid','');
-  const RETURN_URL = decodeURIComponent(qp('return',''));
+  //const RETURN_URL = decodeURIComponent(qp('return',''));
+  // NEW (robust): use return param if present, otherwise document.referrer, otherwise stay empty
+const RETURN_URL_RAW = qp('return','');
+let RETURN_URL = '';
+try {
+  RETURN_URL = RETURN_URL_RAW ? decodeURIComponent(RETURN_URL_RAW) : '';
+} catch(e) {
+  RETURN_URL = RETURN_URL_RAW || '';
+}
+if (!RETURN_URL && document.referrer) {
+  RETURN_URL = document.referrer;
+}
 
   // --- DOM refs ---
   const stageIntro = document.getElementById('stage-intro');
@@ -193,16 +204,26 @@
   });
 
   toQualtrics.addEventListener('click', ()=>{
-    const end = Date.now();
-    const viewSecs = ((end - feedbackStart)/1000).toFixed(2);
-    const tFirst = firstInteraction ? ((firstInteraction - feedbackStart)/1000).toFixed(2) : '';
+  const end = Date.now();
+  const viewSecs = ((end - feedbackStart)/1000).toFixed(2);
+  const tFirst = firstInteraction ? ((firstInteraction - feedbackStart)/1000).toFixed(2) : '';
 
-    // compact payload: idx|v|oi joined by ';'
-    const compact = order.map((o,idx)=>[idx, o.v[0], o.oi].join('|')).join(';');
+  const compact = order.map((o,idx)=>[idx, o.v[0], o.oi].join('|')).join(';');
+
+  if (RETURN_URL) {
     const glue = RETURN_URL.includes('?') ? '&' : '?';
     const dest = `${RETURN_URL}${glue}pid=${encodeURIComponent(PID)}&cond=${encodeURIComponent(COND)}&fv_time=${encodeURIComponent(viewSecs)}&first_interaction=${encodeURIComponent(tFirst)}&item_order=${encodeURIComponent(compact)}`;
     window.location.assign(dest);
-  });
+  } else {
+    // Fallback: go back to previous page if no return URL was provided
+    if (document.referrer) {
+      window.location.assign(document.referrer);
+    } else {
+      window.history.back();
+    }
+  }
+});
+
 </script>
 </body>
 </html>
