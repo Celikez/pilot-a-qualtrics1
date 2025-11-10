@@ -106,7 +106,6 @@ const PID  = qp('pid','');
 
 // Always prefer the Qualtrics page we came from.
 // If referrer is missing (rare), fall back to the 'return' or 'ret' parameter.
-
 let RETURN_URL = document.referrer || '';
 if (!RETURN_URL) {
   const raw = qp('return', qp('ret',''));
