@@ -100,8 +100,8 @@
   // --- Params from Qualtrics ---
 const COND = (qp('cond','ai')||'ai').toLowerCase();
 const RAND = qp('rand','0') === '1';
-const HOLD = parseInt(qp('hold','15'),10);
-const MINV = parseInt(qp('minView','30'),10);
+const HOLD = parseInt(qp('hold','5'),10);
+const MINV = parseInt(qp('minView','5'),10);
 const PID  = qp('pid','');
 
 // Always prefer the Qualtrics page we came from.
