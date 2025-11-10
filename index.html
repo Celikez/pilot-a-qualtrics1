@@ -294,10 +294,11 @@ console.log('[PilotA] Return target:', RETURN_URL);
 
   if (RETURN_URL) {
     const glue = RETURN_URL.includes('?') ? '&' : '?';
-    const dest = `${RETURN_URL}${glue}pid=${encodeURIComponent(PID)}&cond=${encodeURIComponent(COND)}&fv_time=${encodeURIComponent(viewSecs)}&first_interaction=${encodeURIComponent(tFirst)}&item_order=${encodeURIComponent(compact)}`;
-    window.location.assign(dest);
+    console.log('in if statment');
+    //const dest = `${RETURN_URL}${glue}pid=${encodeURIComponent(PID)}&cond=${encodeURIComponent(COND)}&fv_time=${encodeURIComponent(viewSecs)}&first_interaction=${encodeURIComponent(tFirst)}&item_order=${encodeURIComponent(compact)}`;
+    //window.location.assign(dest);
   } else {
-    console.log('going here!!')
+    console.log('going here!!');
     //window.history.back();
   }
 });
